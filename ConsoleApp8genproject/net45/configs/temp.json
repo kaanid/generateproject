@@ -1,6 +1,6 @@
 ﻿{
   "Name": "$servicename$",
-  "IPHost": "127.0.0.1",
+  "IPHost": "$host$",
   "Port": $port$,
   "Consul2": "http://127.0.0.1:8500",
   "ConsulService": "online.$servicename$.service.consul"

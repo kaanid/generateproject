@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ConsoleApp8genproject
@@ -12,57 +13,64 @@ namespace ConsoleApp8genproject
     {
         static void Main(string[] args)
         {
-            var activefile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fanews.TableSync.thrift");
-            var textThrift = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fanews.TableSync.thrift"));
-            string dllName = GetRegexGroup(textThrift, "^namespace csharp ([A-z_.]+)");
-            string thriftServiceClassName = GetRegexGroup(textThrift, "^service ([A-z_]+)");
-            string serviceName = GetRegexGroup(textThrift, "^# servicename=([A-z_]+)");
-            string host = GetRegexGroup(textThrift, "^# host=([0-9.]+)");
-            string portStr = GetRegexGroup(textThrift, "^# port=(\\d+)");
-            int.TryParse(portStr, out int port);
-
-            var newPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "newNet45", DateTime.Now.Ticks.ToString());
-            if (!Directory.Exists(newPath))
+            var thriftList= Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.thrift");
+            foreach (var activefile in thriftList)
             {
-                Directory.CreateDirectory(newPath);
+
+                //var activefile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fanews.TableSync.thrift");
+                var textThrift = File.ReadAllText(activefile);
+                string dllName = GetRegexGroup(textThrift, "^namespace csharp ([A-z_.]+)");
+                string thriftServiceClassName = GetRegexGroup(textThrift, "^service ([A-z_]+)");
+                string serviceName = GetRegexGroup(textThrift, "^# servicename=([A-z_]+)");
+                string host = GetRegexGroup(textThrift, "^# host=([0-9.]+)");
+                string portStr = GetRegexGroup(textThrift, "^# port=(\\d+)");
+                int.TryParse(portStr, out int port);
+
+                var newPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "newNet45", DateTime.Now.Ticks.ToString());
+                if (!Directory.Exists(newPath))
+                {
+                    Directory.CreateDirectory(newPath);
+                }
+
+                //生成thrift文件
+                //string genPath = $"gen-netcore\\{string.Join("\\", dllName.Split('.'))}";
+                string genPath = $"gen-csharp\\{string.Join("\\", dllName.Split('.'))}";
+                genPath = Path.Combine(newPath, genPath);
+                //string dosCommand = $"thrift.exe --gen netcore {activefile} && explorer.exe gen-netcore\\{string.Join("\\", dllName.Split('.'))}";
+                string dosCommand = $"thrift.exe --gen csharp:async {activefile} ";
+                //csharp:async
+                string message = Util.CmdRunAndReturn(dosCommand, newPath);
+                Console.WriteLine(message);
+
+                string[] thriftCsPathList = Directory.GetFiles(genPath, "*.cs", SearchOption.AllDirectories);
+                string[] csFileList = thriftCsPathList.Select(m => Path.GetFileName(m)).ToArray();
+
+                //生成项目
+                string projectPath = Path.Combine(newPath, "Project");
+                Directory.Move(genPath, projectPath);
+
+                var exprotProject = new ExportNet45Project(projectPath, dllName, thriftServiceClassName, csFileList, port, host, serviceName);
+                exprotProject.Run();
+
+                //编译项目
+                //MSBuild  /t:Rebuild /p:Configuration=Release /fl  /flp:FileLogger,Microsoft.Build.Engine;logfile=Build.log;errorsonly;Encoding=UTF-8
+                message = Util.CmdRunAndReturn("MSBuild  /t:Rebuild /p:Configuration=Release /fl  /flp:FileLogger,Microsoft.Build.Engine;logfile=Build.log;errorsonly;Encoding=UTF-8", projectPath);
+                Console.WriteLine(message);
+
+                //nuget pack
+                //nuget pack Fanews.UserManage.ThriftNet45.nuspec
+
+                //Util.RunProgram("C:\\Windows\\System32\\nuget.exe", $" pack {dllName}Net45.nuspec", projectPath);
+                //message = Util.CmdRunAndReturn($"nuget.exe pack {dllName}Net45.nuspec -Version 1.0.0 -properties Configuration=Release;package=1.0.0 -OutputDirectory C:\\", projectPath);
+                message = Util.CmdRunAndReturn($"nuget.exe pack {dllName}Net45.nuspec", projectPath);
+                Console.WriteLine(message);
+
+
+                //发布 push
+                //nuget push puckersa.sdfsf -source -apikey 
+
+                Thread.Sleep(1000);
             }
-
-            //生成thrift文件
-            //string genPath = $"gen-netcore\\{string.Join("\\", dllName.Split('.'))}";
-            string genPath = $"gen-csharp\\{string.Join("\\", dllName.Split('.'))}";
-            genPath = Path.Combine(newPath, genPath);
-            //string dosCommand = $"thrift.exe --gen netcore {activefile} && explorer.exe gen-netcore\\{string.Join("\\", dllName.Split('.'))}";
-            string dosCommand = $"thrift.exe --gen csharp:async {activefile} ";
-            //csharp:async
-            string message =Util.CmdRunAndReturn(dosCommand, newPath);
-            Console.WriteLine(message);
-
-            string[] thriftCsPathList = Directory.GetFiles(genPath, "*.cs", SearchOption.AllDirectories);
-            string[] csFileList=thriftCsPathList.Select(m => Path.GetFileName(m)).ToArray();
-
-            //生成项目
-            string projectPath =Path.Combine(newPath,"Project");
-            Directory.Move(genPath, projectPath);
-
-            var exprotProject = new ExportNet45Project(projectPath, dllName, thriftServiceClassName, csFileList, port,host,serviceName);
-            exprotProject.Run();
-
-            //编译项目
-            //MSBuild  /t:Rebuild /p:Configuration=Release /fl  /flp:FileLogger,Microsoft.Build.Engine;logfile=Build.log;errorsonly;Encoding=UTF-8
-            message = Util.CmdRunAndReturn("MSBuild  /t:Rebuild /p:Configuration=Release /fl  /flp:FileLogger,Microsoft.Build.Engine;logfile=Build.log;errorsonly;Encoding=UTF-8", projectPath);
-            Console.WriteLine(message);
-
-            //nuget pack
-            //nuget pack Fanews.UserManage.ThriftNet45.nuspec
-
-            //Util.RunProgram("C:\\Windows\\System32\\nuget.exe", $" pack {dllName}Net45.nuspec", projectPath);
-            //message = Util.CmdRunAndReturn($"nuget.exe pack {dllName}Net45.nuspec -Version 1.0.0 -properties Configuration=Release;package=1.0.0 -OutputDirectory C:\\", projectPath);
-            message = Util.CmdRunAndReturn($"nuget.exe pack {dllName}Net45.nuspec", projectPath);
-            Console.WriteLine(message);
-
-
-            //发布 push
-            //nuget push puckersa.sdfsf -source -apikey 
 
             Console.Read();
 
