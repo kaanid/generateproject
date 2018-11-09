@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>$dllname$</AssemblyName>
+    <RootNamespace>$dllname$</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>$description$</Description>
+    <Copyright>Copyright 2018</Copyright>
+    <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
+    <Version>$version$</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fanews.Thrift.ThriftClient" Version="1.0.6" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="configs\$dllname$Service.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Pack>true</Pack>
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+      <PackagePath>contentFiles\any\any\</PackagePath>
+      <BuildAction>None</BuildAction>
+    </None>
+  </ItemGroup>
+
+</Project>

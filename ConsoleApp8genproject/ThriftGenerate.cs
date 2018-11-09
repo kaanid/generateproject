@@ -11,11 +11,15 @@ namespace ConsoleApp8genproject
     public abstract class ThriftGenerate
     {
         protected readonly ThriftServiceInfo _info;
-        
+        protected readonly string _thriftPath;
 
         public ThriftGenerate(string filePath,NetVersion netVersion)
         {
-            _info=Init(filePath,netVersion);
+            //_thriftPath = "thrift.exe";
+            _thriftPath = GetEXEFilePath("thrift.exe");
+            
+            _info =Init(filePath,netVersion);
+            
         }
 
         public ThriftServiceInfo Init(string filePath, NetVersion netVersion)
@@ -90,6 +94,17 @@ namespace ConsoleApp8genproject
             if (_info.NetVersion == NetVersion.Net45)
                 return new GenerateProjectNet45(_info);
             return new GenerateProjectNetCore(_info);
+        }
+
+        protected string GetEXEFilePath(string fileName)
+        {
+            string[] thriftPaths = Directory.GetFiles($"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Microsoft\\VisualStudio\\", fileName, SearchOption.AllDirectories);
+            if (thriftPaths == null || thriftPaths.Length == 0)
+            {
+                //thriftPaths = new string[] { "F:\\Tools\\utils\\thrift.exe" };
+                throw new ArgumentException($"{fileName} 未找到");
+            }
+            return thriftPaths[0];
         }
 
     }

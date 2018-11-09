@@ -51,7 +51,7 @@ namespace ConsoleApp8genproject
 
         public override void GenerateSource(bool isOpen = false)
         {
-            string dosCommand = $"thrift.exe --gen netcore {_info.ThriftFile} ";
+            string dosCommand = $"{_thriftPath} --gen netcore {_info.ThriftFile} ";
             string message = Util.CmdRunAndReturn(dosCommand, _info.WorkDir);
             Console.WriteLine(message);
         }
