@@ -23,12 +23,12 @@ namespace ConsoleApp8genproject
 
             foreach (var activefile in thriftList)
             {
-                //ThriftGenerate thriftGenerate = new ThriftGenerateNet45(activefile);
+                ThriftGenerate thriftGenerate = new ThriftGenerateNet45(activefile);
+                thriftGenerate.GenerateProject();
+
+                //ThriftGenerate thriftGenerate = new ThriftGenerateNetCore(activefile);
                 //thriftGenerate.GenerateProject();
 
-                ThriftGenerate thriftGenerate = new ThriftGenerateNetCore(activefile);
-                thriftGenerate.GenerateProject();
-                
 
                 Thread.Sleep(1000);
             }

@@ -11,6 +11,7 @@ namespace ConsoleApp8genproject
     public abstract class ThriftGenerate
     {
         protected readonly ThriftServiceInfo _info;
+        
 
         public ThriftGenerate(string filePath,NetVersion netVersion)
         {

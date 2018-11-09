@@ -86,7 +86,7 @@ namespace ConsoleApp8genproject
                     if (!string.IsNullOrEmpty(curLine))
                     {
                         sb.Append(curLine);
-                        Console.WriteLine(curLine);
+                        //Console.WriteLine(curLine);
                     }
                     curLine = reader.ReadLine();
                 }
@@ -99,9 +99,9 @@ namespace ConsoleApp8genproject
                 process.Close();
 
                 if (!string.IsNullOrWhiteSpace(err))
-                    return err;
+                    return $"Error:"+err;
 
-                return sb.ToString();
+                return sb.ToString().Substring(sb.ToString().IndexOf('>')+1);
 
             }
             catch (Win32Exception e)
