@@ -14,7 +14,6 @@ namespace ThriftVSIX
     /// <summary>
     /// Command handler
     /// </summary>
-    [ProvideAutoLoad(UIContextGuids.SolutionExists)]
     internal sealed class TopMenuCommand
     {
         /// <summary>
@@ -48,10 +47,15 @@ namespace ThriftVSIX
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
-            var menuCommandID = new CommandID(CommandSet, SubMenu);
+            var menuCommandID = new CommandID(CommandSet, CommandId);
             var menuItem = new OleMenuCommand(this.Execute, menuCommandID);
             menuItem.BeforeQueryStatus += menuItem_BeforeQueryStatus;
             commandService.AddCommand(menuItem);
+
+            var subMenuId = new CommandID(CommandSet, SubMenu);
+            var subMenuItem = new OleMenuCommand(this.Execute, subMenuId);
+            subMenuItem.BeforeQueryStatus += menuItem_BeforeQueryStatus;
+            commandService.AddCommand(subMenuItem);
 
             CommandID subCommandID1 = new CommandID(CommandSet, SubCommandId1);
             OleMenuCommand subItem1 = new OleMenuCommand(new EventHandler(SubItemCallback1), subCommandID1);
