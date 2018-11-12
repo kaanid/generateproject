@@ -139,62 +139,106 @@ namespace ThriftVSIX
             if (dte == null)
                 return;
 
-            //C:\Users\Fanwen\AppData\Local\Microsoft\VisualStudio\15.0_a5d5c7b1Exp\Extensions\Company\ThriftVSIX\1.0\Resources
-            
-
-            var list = Directory.GetFiles("", "", SearchOption.AllDirectories);
-
-            var activeFile = dte.ActiveDocument.FullName;
-            ThriftGenerate ser = new ThriftGenerateNet45(activeFile);
-            ser.GenerateProject(Util.GetExpansionToolResourcesPath());
-
-            VsShellUtilities.ShowMessageBox(
+            try
+            {
+                var activeFile = dte.ActiveDocument.FullName;
+                ThriftGenerate ser = new ThriftGenerateNet45(activeFile);
+                ser.GenerateProject();
+            }
+            catch(Exception ex)
+            {
+                string message = ex.Message;
+                VsShellUtilities.ShowMessageBox(
                 this.package,
-                "SubItemCallback1",
-                "SubItemCallback1",
+                "Thrift Client Net45",
+                message,
                 OLEMSGICON.OLEMSGICON_INFO,
                 OLEMSGBUTTON.OLEMSGBUTTON_OK,
                 OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-            
+            }
         }
 
         private void SubItemCallback2(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            VsShellUtilities.ShowMessageBox(
+            var dte = GetDTE();
+            if (dte == null)
+                return;
+
+            try
+            {
+                var activeFile = dte.ActiveDocument.FullName;
+                ThriftGenerate ser = new ThriftGenerateNet45(activeFile);
+                ser.GenerateSource(true);
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message;
+                VsShellUtilities.ShowMessageBox(
                 this.package,
-                "SubItemCallback2",
-                "SubItemCallback2",
+                "Thrift Server Net45",
+                message,
                 OLEMSGICON.OLEMSGICON_INFO,
                 OLEMSGBUTTON.OLEMSGBUTTON_OK,
                 OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            }
+
+            
         }
 
         private void SubItemCallback3(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            VsShellUtilities.ShowMessageBox(
+            var dte = GetDTE();
+            if (dte == null)
+                return;
+
+            try
+            {
+                var activeFile = dte.ActiveDocument.FullName;
+                ThriftGenerate ser = new ThriftGenerateNetCore(activeFile);
+                ser.GenerateProject();
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message;
+                VsShellUtilities.ShowMessageBox(
                 this.package,
-                "SubItemCallback3",
-                "SubItemCallback3",
+                "Thrift Client dotcore",
+                message,
                 OLEMSGICON.OLEMSGICON_INFO,
                 OLEMSGBUTTON.OLEMSGBUTTON_OK,
                 OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            }
         }
 
         private void SubItemCallback4(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            VsShellUtilities.ShowMessageBox(
+            var dte = GetDTE();
+            if (dte == null)
+                return;
+
+            try
+            {
+                var activeFile = dte.ActiveDocument.FullName;
+                ThriftGenerate ser = new ThriftGenerateNetCore(activeFile);
+                ser.GenerateSource(true);
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message;
+                VsShellUtilities.ShowMessageBox(
                 this.package,
-                "SubItemCallback4",
-                "SubItemCallback4",
+                "Thrift Server dotcore",
+                message,
                 OLEMSGICON.OLEMSGICON_INFO,
                 OLEMSGBUTTON.OLEMSGBUTTON_OK,
                 OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            }
         }
 
         private void menuItem_BeforeQueryStatus(object sender, EventArgs e)
@@ -232,7 +276,5 @@ namespace ThriftVSIX
 
             return dte;
         }
-
-        private DE
     }
 }

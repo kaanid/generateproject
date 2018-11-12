@@ -16,19 +16,32 @@ namespace ThriftVSIX
 
         public ThriftGenerate(string filePath,NetVersion netVersion)
         {
+            _resourcesDir = Util.GetExpansionToolResourcesPath();
+
             //_thriftPath = "thrift.exe";
             _thriftPath = GetEXEFilePath("thrift.exe");
             
             _info =Init(filePath,netVersion);
 
-            _resourcesDir = Util.GetExpansionToolResourcesPath();
         }
 
         public ThriftServiceInfo Init(string filePath, NetVersion netVersion)
         {
             var textThrift = File.ReadAllText(filePath);
 
-            string dllName = GetRegexGroup(textThrift, "^namespace csharp ([A-z_.]+)");
+            string dllName = string.Empty;
+            if (NetVersion.Net45 == netVersion)
+            {
+                dllName = GetRegexGroup(textThrift, "^namespace csharp ([A-z_.]+)");
+            }else
+            {
+                dllName = GetRegexGroup(textThrift, "^namespace netcore ([A-z_.]+)");
+            }
+            if(string.IsNullOrWhiteSpace(dllName))
+            {
+                throw new ArgumentNullException($"namespace {NetVersion.Net45} is null");
+            }
+
             string thriftServiceClassName = GetRegexGroup(textThrift, "^service ([A-z_]+)");
             string serviceName = GetRegexGroup(textThrift, "^# servicename=([A-z_]+)");
             string host = GetRegexGroup(textThrift, "^# host=([0-9.]+)");
@@ -55,8 +68,13 @@ namespace ThriftVSIX
             return info;
         }
 
-        public abstract void GenerateSource(bool isOpen=false);
+        public abstract void GenerateSource(bool isOpen = false);
         public abstract void GenerateProject();
+
+        protected void OpenSoureFolder()
+        {
+            OpenFolder(_info.ThriftSourceFileDir);
+        }
 
         public void OpenFolder(string folderPath)
         {

@@ -14,13 +14,13 @@ namespace ThriftVSIX
 
         }
 
-        public override void GenerateProject(string tempDir)
+        public override void GenerateProject()
         {
             SetCSFileList();
 
             MoveToProject();
 
-            var exprotProject = GetGenerateProject(tempDir);
+            var exprotProject = GetGenerateProject();
             exprotProject.Run();
 
             //还原nuget
@@ -54,6 +54,11 @@ namespace ThriftVSIX
             string dosCommand = $"{_thriftPath} --gen netcore {_info.ThriftFile} ";
             string message = Util.CmdRunAndReturn(dosCommand, _info.WorkDir);
             Console.WriteLine(message);
+
+            if (isOpen)
+            {
+                OpenSoureFolder();
+            }
         }
     }
 }

@@ -41,7 +41,7 @@
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
           <ButtonText>Thrift生成</ButtonText>
-          <CommandName>Sub Menu</CommandName>
+          <CommandName>Thrift Generate</CommandName>
         </Strings>
       </Menu>
     </Menus>

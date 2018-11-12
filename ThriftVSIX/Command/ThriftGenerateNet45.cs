@@ -9,22 +9,16 @@ namespace ThriftVSIX
 {
     public class ThriftGenerateNet45:ThriftGenerate
     {
-        private readonly string _nugetPath;
-        private readonly string _msbuildPath;
-
         public ThriftGenerateNet45(string filePath):base(filePath, NetVersion.Net45)
         {
-
-            //_nugetPath = "nuget.exe";
-            //_msbuildPath = "msbuild.exe";
-
-            _nugetPath =GetEXEFilePath("nuget.exe");
-            _msbuildPath = "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\MSBuild\\15.0\\Bin\\MSBuild.exe\"";
 
         }
 
         public override void GenerateProject()
         {
+            string _nugetPath = GetEXEFilePath("nuget.exe");
+            string _msbuildPath = "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\MSBuild\\15.0\\Bin\\MSBuild.exe\"";
+
             SetCSFileList();
 
             MoveToProject();
@@ -60,6 +54,11 @@ namespace ThriftVSIX
             string dosCommand = $"{_thriftPath} --gen csharp:async {_info.ThriftFile} ";
             string message = Util.CmdRunAndReturn(dosCommand, _info.WorkDir);
             Console.WriteLine(message);
+
+            if (isOpen)
+            {
+                OpenSoureFolder();
+            }
         }
     }
 }
