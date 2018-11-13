@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp8genproject
+namespace ThriftService
 {
     public interface IGenerateProject
     {

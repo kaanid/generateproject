@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using ThriftService;
 using Task = System.Threading.Tasks.Task;
 
 namespace ThriftVSIX

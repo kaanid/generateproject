@@ -6,34 +6,55 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ConsoleApp8genproject
+namespace ThriftService
 {
     public abstract class ThriftGenerate
     {
         protected readonly ThriftServiceInfo _info;
         protected readonly string _thriftPath;
+        protected readonly string _resourcesDir;
 
         public ThriftGenerate(string filePath,NetVersion netVersion)
         {
+            _resourcesDir = Util.GetExpansionToolResourcesPath();
+
             //_thriftPath = "thrift.exe";
             _thriftPath = GetEXEFilePath("thrift.exe");
             
             _info =Init(filePath,netVersion);
-            
+
         }
 
         public ThriftServiceInfo Init(string filePath, NetVersion netVersion)
         {
             var textThrift = File.ReadAllText(filePath);
 
-            string dllName = GetRegexGroup(textThrift, "^namespace csharp ([A-z_.]+)");
+            string dllName = string.Empty;
+            if (NetVersion.Net45 == netVersion)
+            {
+                dllName = GetRegexGroup(textThrift, "^namespace csharp ([A-z_.]+)");
+            }else
+            {
+                dllName = GetRegexGroup(textThrift, "^namespace netcore ([A-z_.]+)");
+            }
+
+            if(string.IsNullOrWhiteSpace(dllName))
+            {
+                throw new ArgumentNullException($"namespace {NetVersion.Net45} is null");
+            }
+
             string thriftServiceClassName = GetRegexGroup(textThrift, "^service ([A-z_]+)");
             string serviceName = GetRegexGroup(textThrift, "^# servicename=([A-z_]+)");
             string host = GetRegexGroup(textThrift, "^# host=([0-9.]+)");
             string portStr = GetRegexGroup(textThrift, "^# port=(\\d+)");
             int.TryParse(portStr, out int port);
+            bool isPush = false;
+            var strPush = GetRegexGroup(textThrift, "^# nugetpush=(TRUE|true)");
+            if (strPush!=null)
+                isPush = true;
+            
 
-            var newPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "newNet45", DateTime.Now.Ticks.ToString());
+            string newPath = $"{Path.GetTempPath()}thrift\\{DateTime.Now.Ticks}";
             if (!Directory.Exists(newPath))
             {
                 Directory.CreateDirectory(newPath);
@@ -48,13 +69,19 @@ namespace ConsoleApp8genproject
                 NetVersion = netVersion,
                 ServiceName = serviceName,
                 Host = host,
-                Port = port
+                Port = port,
+                NugetPush=isPush
             };
             return info;
         }
 
-        public abstract void GenerateSource(bool isOpen=false);
+        public abstract void GenerateSource(bool isOpen = false);
         public abstract void GenerateProject();
+
+        protected void OpenSoureFolder()
+        {
+            OpenFolder(_info.ThriftSourceFileDir);
+        }
 
         public void OpenFolder(string folderPath)
         {
@@ -92,13 +119,13 @@ namespace ConsoleApp8genproject
         protected IGenerateProject GetGenerateProject()
         {
             if (_info.NetVersion == NetVersion.Net45)
-                return new GenerateProjectNet45(_info);
-            return new GenerateProjectNetCore(_info);
+                return new GenerateProjectNet45(_info, _resourcesDir);
+            return new GenerateProjectNetCore(_info, _resourcesDir);
         }
 
         protected string GetEXEFilePath(string fileName)
         {
-            string[] thriftPaths = Directory.GetFiles($"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Microsoft\\VisualStudio\\", fileName, SearchOption.AllDirectories);
+            string[] thriftPaths = Directory.GetFiles(_resourcesDir, fileName, SearchOption.AllDirectories);
             if (thriftPaths == null || thriftPaths.Length == 0)
             {
                 //thriftPaths = new string[] { "F:\\Tools\\utils\\thrift.exe" };
@@ -106,6 +133,5 @@ namespace ConsoleApp8genproject
             }
             return thriftPaths[0];
         }
-
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ThriftVSIX
+namespace ThriftService
 {
     public class ThriftServiceInfo
     {
@@ -47,6 +47,10 @@ namespace ThriftVSIX
         }
 
         public string[] ThriftCSFileNameList { set; get; }
+        /// <summary>
+        /// 是否发布
+        /// </summary>
+        public bool NugetPush { set; get; }
     }
 
     public enum NetVersion

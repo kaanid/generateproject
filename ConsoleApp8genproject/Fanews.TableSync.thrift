@@ -1,6 +1,7 @@
 ﻿# servicename=abc
 # host=127.0.0.2
 # port=10
+# nugetpush=true
 
 namespace csharp Fanews.TableSync.Thrift
 namespace netcore Fanews.TableSync.Thrift

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp8genproject
+namespace ThriftService
 {
     public class ThriftGenerateNetCore : ThriftGenerate
     {
@@ -38,12 +38,15 @@ namespace ConsoleApp8genproject
             message = Util.CmdRunAndReturn("dotnet pack -c Release", _info.ProjectDir);
             Console.WriteLine(message);
 
-            //发布 push
-            //dotnet nuget push Fanews.UserManage.Thrift.1.2018.11.9141.nupkg -s http://10.252.148.40/nuget -k fanews@2018ngt!@#$
             var nugetpackDir = Path.Combine(_info.ProjectDir, "bin\\Release");
-            var nugetpackName = $"{_info.ThriftNamespaceName}.{exprotProject.Version}.nupkg";
-            message = Util.CmdRunAndReturn($"dotnet nuget push {nugetpackName} -s http://10.252.148.40/nuget -k fanews@2018ngt!@#$", nugetpackDir);
-            Console.WriteLine(message);
+            if (_info.NugetPush)
+            {
+                //发布 push
+                //dotnet nuget push Fanews.UserManage.Thrift.1.2018.11.9141.nupkg -s http://10.252.148.40/nuget -k fanews@2018ngt!@#$
+                var nugetpackName = $"{_info.ThriftNamespaceName}.{exprotProject.Version}.nupkg";
+                message = Util.CmdRunAndReturn($"dotnet nuget push {nugetpackName} -s http://10.252.148.40/nuget -k fanews@2018ngt!@#$", nugetpackDir);
+                Console.WriteLine(message);
+            }
 
             //打开文件夹
             OpenFolder(nugetpackDir);
@@ -54,6 +57,11 @@ namespace ConsoleApp8genproject
             string dosCommand = $"{_thriftPath} --gen netcore {_info.ThriftFile} ";
             string message = Util.CmdRunAndReturn(dosCommand, _info.WorkDir);
             Console.WriteLine(message);
+
+            if (isOpen)
+            {
+                OpenSoureFolder();
+            }
         }
     }
 }

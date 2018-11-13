@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp8genproject
+namespace ThriftService
 {
-    public class GenerateProjectNet45: GenerateProject
+    public class GenerateProjectNetCore : GenerateProject
     {
         private readonly ThriftServiceInfo _info;
         private readonly string _tempPath;
-        public GenerateProjectNet45(ThriftServiceInfo info)
+        public GenerateProjectNetCore(ThriftServiceInfo info,string tempDir)
         {
             _info = info;
-            _tempPath= Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "net45");
+            _tempPath= Path.Combine(tempDir, "netcore");
         }
 
         public override void Run()
@@ -26,18 +26,12 @@ namespace ConsoleApp8genproject
 
             var path = Path.Combine(_tempPath, "temp.csproj");
 
-            StringBuilder sb = new StringBuilder();
-            foreach (var s in _info.ThriftCSFileNameList)
-            {
-                sb.AppendFormat("    <Compile Include=\"{0}\" />\r\n", s);
-            }
-
             var text = File.ReadAllText(path);
             text = text
-                .Replace("$guid$", Guid.NewGuid().ToString().ToUpper())
+
                 .Replace("$dllname$", _info.ThriftNamespaceName)
-                .Replace("$dllpath$", "..\\..\\dependency")
-                .Replace("$compilelist$", sb.ToString().Trim());
+                .Replace("$version$", Version)
+                .Replace("$description$", $"{_info.ThriftNamespaceName} netcore thrift service");
 
             var newPath = _info.ProjectDir;
             if (!Directory.Exists(newPath))
@@ -45,28 +39,8 @@ namespace ConsoleApp8genproject
                 Directory.CreateDirectory(newPath);
             }
 
-            var path2 = Path.Combine(newPath, $"{_info.ThriftNamespaceName}Net45.csproj");
+            var path2 = Path.Combine(newPath, $"{_info.ThriftNamespaceName}.csproj");
             File.WriteAllText(path2, text);
-
-
-            //$id$
-            //$version$
-            //$title$
-            //$authors$
-            //$description$
-            //$dllfilefullname$
-
-            var textNuspec = File.ReadAllText(_tempPath + "\\temp.nuspec");
-            textNuspec = textNuspec
-                .Replace("$id$", _info.ThriftNamespaceName)
-                .Replace("$version$", Version)
-                .Replace("$title$", _info.ThriftNamespaceName)
-                .Replace("$authors$", "fanews")
-                .Replace("$description$", $"{_info.ThriftNamespaceName} Net45 thrift service")
-                .Replace("$dllfilefullname$", _info.ThriftNamespaceName);
-
-            var newNuspecPath = Path.Combine(newPath, $"{_info.ThriftNamespaceName}Net45.nuspec");
-            File.WriteAllText(newNuspecPath, textNuspec);
 
             //$serviceclassname$
             //$dllname$

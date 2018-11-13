@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ThriftVSIX
+namespace ThriftService
 {
     public abstract class GenerateProject : IGenerateProject
     {

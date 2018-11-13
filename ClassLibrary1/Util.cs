@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp8genproject
+namespace ThriftService
 {
     public class Util
     {
+        public const string ExtensionToolVersion= "1.0";
         public static void RunProgram(string programName, string cmd, string currentPath = "")
         {
             Process proc = new Process();
@@ -123,6 +124,50 @@ namespace ConsoleApp8genproject
         private static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
             Console.WriteLine(e.Data);
+        }
+
+        public static string GetExpansionToolPath()
+        {
+            var plus = Directory.GetDirectories("C:\\Users\\Fanwen\\AppData\\Local\\Microsoft\\VisualStudio\\", "ThriftVSIX", SearchOption.AllDirectories);
+            if (plus.Length == 0)
+                throw new ArgumentNullException("未安装插件");
+
+            return plus[0];
+        }
+
+        public static string GetExpansionToolResourcesPath()
+        {
+            var toolPath = GetExpansionToolPath();
+
+            var resourcesPath = Path.Combine(toolPath, $"{Util.ExtensionToolVersion}\\Resources");
+
+            if(!Directory.Exists(resourcesPath))
+                throw new ArgumentNullException("资源不存在");
+
+            return resourcesPath;
+        }
+
+        public static void CopyDllToThriftDir(string resourcesPath)
+        {
+            string newPath = $"{Path.GetTempPath()}thrift\\dependency\\";
+            if (Directory.Exists(newPath))
+            {
+                return;
+            }
+
+            var fList = Directory.GetDirectories(resourcesPath + "\\dependency\\", "*", SearchOption.AllDirectories);
+            foreach (var f in fList)
+            {
+                var str = Path.GetFileName(f);
+                string str2 = Path.Combine(newPath, str);
+                Directory.CreateDirectory(str2);
+
+                var tList = Directory.GetFiles(f);
+                foreach (var t in tList)
+                {
+                    File.Copy(t, Path.Combine(str2, Path.GetFileName(t)));
+                }
+            }
         }
     }
 }
