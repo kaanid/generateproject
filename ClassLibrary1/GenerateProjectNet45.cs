@@ -32,9 +32,11 @@ namespace ThriftService
                 sb.AppendFormat("    <Compile Include=\"{0}\" />\r\n", s);
             }
 
+            var guid = Guid.NewGuid();
+
             var text = File.ReadAllText(path);
             text = text
-                .Replace("$guid$", Guid.NewGuid().ToString().ToUpper())
+                .Replace("$guid$", guid.ToString().ToUpper())
                 .Replace("$dllname$", _info.ThriftNamespaceName)
                 .Replace("$dllpath$", "..\\..\\dependency")
                 .Replace("$compilelist$", sb.ToString().Trim());
@@ -92,6 +94,19 @@ namespace ThriftService
             Directory.CreateDirectory(Path.Combine(newPath, "configs"));
             var newJsonPath = Path.Combine(newPath, "configs", $"{_info.ThriftNamespaceName}Service.json");
             File.WriteAllText(newJsonPath, textJson);
+
+            //$dllname$
+            //$guid$
+            //$version$
+            var testAssemblyInfo = File.ReadAllText(_tempPath + "\\Properties\\AssemblyInfo.cs");
+            testAssemblyInfo = testAssemblyInfo
+                .Replace("$dllname$",_info.ThriftNamespaceName)
+                .Replace("$guid$", guid.ToString())
+                .Replace("$version$", Version);
+
+            Directory.CreateDirectory(Path.Combine(newPath, "Properties"));
+            var newPropertiesPath = Path.Combine(newPath, "Properties", "AssemblyInfo.cs");
+            File.WriteAllText(newPropertiesPath, testAssemblyInfo);
         }
     }
 }

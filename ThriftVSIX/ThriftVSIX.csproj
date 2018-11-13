@@ -55,6 +55,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Resources\net45\Properties\AssemblyInfo.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Compile Include="TopMenuCommand.cs" />
     <Compile Include="TopMenuCommandPackage.cs" />
     <Content Include="Resources\dependency\net45\Consul.dll">
