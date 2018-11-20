@@ -15,7 +15,7 @@
     <content type="application/octet-stream" src="/ThriftVSIX.vsix" />
     <Vsix xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/developer/vsx-syndication-schema/2010">
       <Id>ThriftVSIX.7f558650-bddf-4849-842f-baf069772eda</Id>
-      <Version>1.0.4.0</Version>
+      <Version>1.0.6.0</Version>
       <References />
       <Rating xsi:nil="true" />
       <RatingCount xsi:nil="true" />

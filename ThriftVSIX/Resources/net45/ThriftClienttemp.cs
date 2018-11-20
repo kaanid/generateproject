@@ -11,7 +11,7 @@ namespace $dllname$
 {
     public interface IThriftClient
     {
-        Iface Client2 { get; }
+        Iface C { get; }
     }
 
     public class ThriftClient:IThriftClient
@@ -94,7 +94,7 @@ namespace $dllname$
             }
         }
 
-        public Iface Client2
+        public Iface C
         {
             get
             {
