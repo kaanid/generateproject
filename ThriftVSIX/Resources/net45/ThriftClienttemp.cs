@@ -9,7 +9,12 @@ using static $dllname$.$serviceclassname$;
 
 namespace $dllname$
 {
-    public class ThriftClient
+    public interface IThriftClient
+    {
+        Iface Client2 { get; }
+    }
+
+    public class ThriftClient:IThriftClient
     {
         private static string visitAppName = "App";
         private const string configFileName= "configs/$dllname$Service.json";
@@ -86,6 +91,14 @@ namespace $dllname$
                     var m= await ClientAsync;
                     return m;
                 }).Result;
+            }
+        }
+
+        public Iface Client2
+        {
+            get
+            {
+                return Client;
             }
         }
     }
