@@ -11,7 +11,7 @@ namespace ThriftService
 {
     public class Util
     {
-        public const string ExtensionToolVersion= "1.0.6.0";
+        public const string ExtensionToolVersion= "1.0.8.0";
         public static void RunProgram(string programName, string cmd, string currentPath = "")
         {
             Process proc = new Process();

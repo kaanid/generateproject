@@ -41,32 +41,40 @@ namespace $dllname$
             visitAppName = formAppName;
         }
 
+        private static void LoadConf()
+        {
+            if (config == null)
+                return;
+
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configFileName);
+            if (!File.Exists(filePath))
+            {
+                filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", configFileName);
+                if (!File.Exists(filePath))
+                {
+                    throw new ArgumentNullException($"fild nofound path:{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configFileName)} path:{filePath}");
+                }
+            }
+
+            config = ThriftConfig.GetConfig(filePath);
+            if (config == null)
+            {
+                throw new ArgumentNullException($"config is null path:{filePath}");
+            }
+
+            visitAppName = ConfigurationManager.AppSettings.Get("AppName") ?? visitAppName;
+
+            Fanews.UserManage.Thrift.UserManage.Client.ExcetinedEvent += (method, clinet) =>
+            {
+                ClientStartup.SetFree(typeof(Client), clinet);
+            };
+        }
+
         private static Task<Client> ClientAsync
         {
             get
             {
-                if(config==null)
-                {
-                    string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configFileName);
-                    if(!File.Exists(filePath))
-                    {
-                        filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"bin", configFileName);
-                        if(!File.Exists(filePath))
-                        {
-                            throw new ArgumentNullException($"fild nofound path:{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configFileName)} path:{filePath}");
-                        }
-                    }
-
-                    config = ThriftConfig.GetConfig(filePath);
-                    if(config == null)
-                    {
-                        throw new ArgumentNullException($"config is null path:{filePath}");
-                    }
-
-                    visitAppName = ConfigurationManager.AppSettings.Get("AppName") ?? visitAppName;
-                }
-
-                return ClientStartup.GetByCache<Client>(config, visitAppName, (model)=> {
+                return ClientStartup.GetByPoolAsync<Client>(config, visitAppName, (model) => {
                     if (model == null)
                         return false;
 
@@ -99,6 +107,15 @@ namespace $dllname$
             get
             {
                 return Client;
+            }
+        }
+
+        public static Client ClientOne
+        {
+            get
+            {
+                LoadConf();
+                return ClientStartup.Get<Client>(config);
             }
         }
     }
