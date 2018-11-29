@@ -74,6 +74,8 @@ namespace $dllname$
         {
             get
             {
+                LoadConf();
+
                 return ClientStartup.GetByPoolAsync<Client>(config, visitAppName, (model) => {
                     if (model == null)
                         return false;
