@@ -43,7 +43,7 @@ namespace $dllname$
 
         private static void LoadConf()
         {
-            if (config == null)
+            if (config != null)
                 return;
 
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configFileName);
