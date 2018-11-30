@@ -39,6 +39,8 @@ namespace $dllname$
 
             config = thriftClientConfig;
             visitAppName = formAppName;
+
+            SetFreeEvent();
         }
 
         private static void LoadConf()
@@ -64,7 +66,12 @@ namespace $dllname$
 
             visitAppName = ConfigurationManager.AppSettings.Get("AppName") ?? visitAppName;
 
-            Fanews.UserManage.Thrift.UserManage.Client.ExcetinedEvent += (method, clinet) =>
+            SetFreeEvent();
+        }
+
+        private static void SetFreeEvent()
+        {
+            Client.ExcetinedEvent += (method, clinet) =>
             {
                 ClientStartup.SetFree(typeof(Client), clinet);
             };

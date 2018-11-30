@@ -40,6 +40,8 @@ namespace $dllname$
 
             config = thriftClientConfig;
             visitAppName = formAppName;
+
+            SetFreeEvent();
         }
 
         private static void LoadConf()
@@ -60,7 +62,16 @@ namespace $dllname$
             {
                 throw new ArgumentNullException("ThriftClientConfig");
             }
-        
+
+            SetFreeEvent();
+        }
+
+        private static void SetFreeEvent()
+        {
+            Client.ExcetinedEvent += (method, clinet) =>
+            {
+                ClientStartup.SetFree(typeof(Client), clinet);
+            };
         }
 
         public static Task<IAsync> ClientAsync
