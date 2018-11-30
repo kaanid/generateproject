@@ -8,6 +8,10 @@ using static $dllname$.$serviceclassname$;
 
 namespace $dllname$
 {
+    public interface IThriftClient
+    {
+        IAsync C { get; }
+    }
     public partial class ThriftClient
     {
         private static string visitAppName = "App";
@@ -38,24 +42,32 @@ namespace $dllname$
             visitAppName = formAppName;
         }
 
+        private static void LoadConf()
+        {
+            if (config != null)
+            {
+                return ;
+            }
+
+            var _config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", true)
+                .AddJsonFile(configFileName, false, false)
+                .Build();
+
+            visitAppName = _config["AppName"]?.ToString() ?? visitAppName;
+            config = _config.Get<ThriftClientConfig>();
+            if (config == null)
+            {
+                throw new ArgumentNullException("ThriftClientConfig");
+            }
+        
+        }
+
         public static Task<IAsync> ClientAsync
         {
             get
             {
-                if(config==null)
-                {
-                    var _config = new ConfigurationBuilder()
-                        .AddJsonFile("appsettings.json",true)
-                        .AddJsonFile(configFileName, false, false)
-                        .Build();
-
-                    visitAppName = _config["AppName"]?.ToString()?? visitAppName;
-                    config = _config.Get<ThriftClientConfig>();
-                    if(config == null)
-                    {
-                        throw new ArgumentNullException("ThriftClientConfig");
-                    }
-                }
+                LoadConf();
 
                 return ClientStartup.GetByCache<Client, IAsync>(config, visitAppName, true, _log);
             }
@@ -68,5 +80,22 @@ namespace $dllname$
                 return ClientAsync.GetAwaiter().GetResult();
             }
         }
-    }
+
+        public IAsync C
+        {
+            get
+            {
+                return Client;
+            }
+        }
+
+        public static IAsync ClientOne
+        {
+            get
+            {
+                LoadConf();
+                return ClientStartup.Get<Client>(config);
+            }
+        }
+}
 }
