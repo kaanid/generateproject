@@ -46,7 +46,7 @@ namespace $dllname$
         {
             if (config != null)
             {
-                return ;
+                return;
             }
 
             var _config = new ConfigurationBuilder()
@@ -69,7 +69,7 @@ namespace $dllname$
             {
                 LoadConf();
 
-                return ClientStartup.GetByCache<Client, IAsync>(config, visitAppName, true, _log);
+                return ClientStartup.GetByPoolAsync<Client, IAsync>(config, visitAppName, _log);
             }
         }
 
