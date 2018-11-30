@@ -67,8 +67,8 @@ namespace $dllname$
         }
 
         private static void SetFreeEvent()
-        {
-            Client.ExcetinedEvent += (method, clinet) =>
+    {
+            $dllname$.$serviceclassname$.Client.ExcetinedEvent += (method, clinet) =>
             {
                 ClientStartup.SetFree(typeof(Client), clinet);
             };
