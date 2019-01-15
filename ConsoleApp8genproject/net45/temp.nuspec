@@ -15,7 +15,7 @@
     <copyright>Copyright 2018</copyright>
     <tags>Tag1 Tag2</tags>
     <dependencies>
-      <dependency id="Fanews.Thrift.ThriftClientNet45" version="1.0" />
+      <dependency id="Fanews.Thrift.ThriftClientNet45" version="1.0.0.18" />
       <dependency id="Newtonsoft.Json" version="11.0.0.0" />
     </dependencies>
   </metadata>
