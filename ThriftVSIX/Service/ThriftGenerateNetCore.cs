@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThriftVSIX.Properties;
 
 namespace ThriftService
 {
@@ -44,7 +45,7 @@ namespace ThriftService
                 //发布 push
                 //dotnet nuget push Fanews.UserManage.Thrift.1.2018.11.9141.nupkg -s http://10.252.148.40/nuget -k fanews@2018ngt!@#$
                 var nugetpackName = $"{_info.ThriftNamespaceName}.{exprotProject.Version}.nupkg";
-                message = Util.CmdRunAndReturn($"dotnet nuget push {nugetpackName} -s http://10.252.148.40/nuget -k fanews@2018ngt!@#$", nugetpackDir);
+                message = Util.CmdRunAndReturn($"dotnet nuget push {nugetpackName} -s http://10.252.148.40/nuget -k {Resource.NugetApiKey}", nugetpackDir);
                 Console.WriteLine(message);
             }
 
