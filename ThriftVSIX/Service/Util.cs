@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,7 +12,11 @@ namespace ThriftService
 {
     public class Util
     {
-        public const string ExtensionToolVersion = "1.0.8.0";
+        public static string ExtensionToolVersion {
+            get {
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
+        }
         public static void RunProgram(string programName, string cmd, string currentPath = "")
         {
             Process proc = new Process();
