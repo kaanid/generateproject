@@ -58,11 +58,6 @@
     <Content Include="Resources\net45\Properties\AssemblyInfo.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Compile Include="Properties\ResourceString.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ResourceString.resx</DependentUpon>
-    </Compile>
     <Compile Include="Service\GenerateProject.cs" />
     <Compile Include="Service\GenerateProjectNet45.cs" />
     <Compile Include="Service\GenerateProjectNetCore.cs" />
@@ -225,10 +220,6 @@
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.8.122\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\ResourceString.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ResourceString.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>

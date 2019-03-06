@@ -13,6 +13,7 @@ namespace ThriftService
         protected readonly ThriftServiceInfo _info;
         protected readonly string _thriftPath;
         protected readonly string _resourcesDir;
+        protected const string NugetApiKey= "fanews@2018nuget";
 
         public ThriftGenerate(string filePath,NetVersion netVersion)
         {
