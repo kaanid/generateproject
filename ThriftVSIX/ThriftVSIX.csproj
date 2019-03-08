@@ -98,13 +98,13 @@
   <ItemGroup>
     <None Include="Key.snk" />
     <None Include="packages.config" />
-    <Content Include="Resources\net45\configs\temp.json">
+    <Content Include="Resources\net45\Configs\temp.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\net45\temp.nuspec">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Resources\netcore\configs\temp.json">
+    <Content Include="Resources\netcore\Configs\temp.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="source.extension.vsixmanifest">

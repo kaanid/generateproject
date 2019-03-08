@@ -15,7 +15,7 @@ namespace $dllname$
     public partial class ThriftClient
     {
         private static string visitAppName = "App";
-        private const string configFileName= "configs/$dllname$Service.json";
+        private const string configFileName= "Configs/$dllname$Service.json";
         private static ILogger<ThriftClient> _log = new LoggerFactory()
             .AddConsole()
             .AddDebug()

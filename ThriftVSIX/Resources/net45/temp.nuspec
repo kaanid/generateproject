@@ -20,7 +20,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="configs\*.json" target="Content\configs\"/>
+    <file src="Configs\*.json" target="Content\Configs\"/>
     <file src="bin\Release\$dllfilefullname$Net45.dll" target="lib\net45\"/>
   </files>
 </package>

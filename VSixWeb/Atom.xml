@@ -2,20 +2,20 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title type="text" />
   <id>uuid:bcecded5-97c8-4d24-96f1-7d9e16652433;id=1</id>
-  <updated>2019-03-06T11:25:48Z</updated>
+  <updated>2019-03-08T11:25:48Z</updated>
   <entry>
     <id>ThriftVSIX.7f558650-bddf-4849-842f-baf069772eda</id>
     <title type="text">ThriftVSIX</title>
     <summary type="text">ThriftVSIX net45 netcore.</summary>
-    <published>2019-03-06T11:25:48-07:00</published>
-    <updated>2019-03-06T11:25:48-07:00</updated>
+    <published>2019-03-08T11:25:48-07:00</published>
+    <updated>2019-03-08T11:25:48-07:00</updated>
     <author>
       <name>Fanews</name>
     </author>
     <content type="application/octet-stream" src="/ThriftVSIX.vsix" />
     <Vsix xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/developer/vsx-syndication-schema/2010">
       <Id>ThriftVSIX.7f558650-bddf-4849-842f-baf069772eda</Id>
-      <Version>1.0.9.2</Version>
+      <Version>1.0.9.4</Version>
       <References />
       <Rating xsi:nil="true" />
       <RatingCount xsi:nil="true" />

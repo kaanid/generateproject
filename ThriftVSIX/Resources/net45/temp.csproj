@@ -64,7 +64,7 @@
     $compilelist$
   </ItemGroup>
   <ItemGroup>
-    <None Include="configs\$dllname$Service.json">
+    <None Include="Configs\$dllname$Service.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <PackageBuild>Ture</PackageBuild>
     </None>

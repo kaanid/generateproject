@@ -17,7 +17,7 @@ namespace $dllname$
     public class ThriftClient:IThriftClient
     {
         private static string visitAppName = "App";
-        private const string configFileName= "configs/$dllname$Service.json";
+        private const string configFileName= "Configs/$dllname$Service.json";
 
         public static ThriftClientConfig config {private set;get;}
 

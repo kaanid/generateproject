@@ -15,7 +15,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Update="configs\$dllname$Service.json">
+    <None Update="Configs\$dllname$Service.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Pack>true</Pack>
       <PackageCopyToOutput>true</PackageCopyToOutput>

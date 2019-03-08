@@ -85,14 +85,14 @@ namespace ThriftService
             //$host$
             //$port$
 
-            var textJson = File.ReadAllText(_tempPath + "\\configs\\temp.json");
+            var textJson = File.ReadAllText(_tempPath + "\\Configs\\temp.json");
             textJson = textJson
                 .Replace("$servicename$", _info.ServiceName)
                 .Replace("$host$", _info.Host)
                 .Replace("$port$", _info.Port.ToString());
 
-            Directory.CreateDirectory(Path.Combine(newPath, "configs"));
-            var newJsonPath = Path.Combine(newPath, "configs", $"{_info.ThriftNamespaceName}Service.json");
+            Directory.CreateDirectory(Path.Combine(newPath, "Configs"));
+            var newJsonPath = Path.Combine(newPath, "Configs", $"{_info.ThriftNamespaceName}Service.json");
             File.WriteAllText(newJsonPath, textJson);
 
             //$dllname$
