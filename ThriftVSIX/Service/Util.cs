@@ -148,6 +148,9 @@ namespace ThriftService
                 if (files.Length == 0)
                     continue;
 
+                // 暂不考虑version
+                //Util.ExtensionToolVersion
+
                 return p2;
             }
 
@@ -159,9 +162,10 @@ namespace ThriftService
         {
             var toolPath = GetExpansionToolPath();
 
-            var resourcesPath = Path.Combine(toolPath, $"{Util.ExtensionToolVersion}\\Resources");
+            //var resourcesPath = Path.Combine(toolPath, $"{Util.ExtensionToolVersion}\\Resources");
+            var resourcesPath = Path.Combine(toolPath, "Resources");
 
-            if(!Directory.Exists(resourcesPath))
+            if (!Directory.Exists(resourcesPath))
                 throw new ArgumentNullException("资源不存在");
 
             return resourcesPath;
