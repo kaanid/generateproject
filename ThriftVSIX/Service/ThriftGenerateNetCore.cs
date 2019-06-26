@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,17 +28,20 @@ namespace ThriftService
             //还原nuget
             //dotnet restore -s http://10.252.148.40/nuget -s https://api.nuget.org/v3/index.json
             string message = Util.CmdRunAndReturn("dotnet restore -s http://10.252.148.40/nuget -s https://api.nuget.org/v3/index.json", _info.ProjectDir);
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
+            Util.CheckCmdMessageThrewException(message);
 
             //编译项目
             // dotnet build -c Release
             message = Util.CmdRunAndReturn("dotnet build -c Release", _info.ProjectDir);
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
+            Util.CheckCmdMessageThrewException(message);
 
             //pack
             //dotnet pack -c Release
             message = Util.CmdRunAndReturn("dotnet pack -c Release", _info.ProjectDir);
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
+            Util.CheckCmdMessageThrewException(message);
 
             var nugetpackDir = Path.Combine(_info.ProjectDir, "bin\\Release");
             if (_info.NugetPush)
@@ -56,7 +61,8 @@ namespace ThriftService
         {
             string dosCommand = $"{_thriftPath} --gen netcore {_info.ThriftFile} ";
             string message = Util.CmdRunAndReturn(dosCommand, _info.WorkDir);
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
+            Util.CheckCmdMessageThrewException(message);
 
             if (isOpen)
             {

@@ -31,13 +31,15 @@ namespace ThriftService
             //编译项目
             //MSBuild  /t:Rebuild /p:Configuration=Release /fl  /flp:FileLogger,Microsoft.Build.Engine;logfile=Build.log;errorsonly;Encoding=UTF-8
             string message = Util.CmdRunAndReturn($"{_msbuildPath}  /t:Rebuild /p:Configuration=Release /fl  /flp:FileLogger,Microsoft.Build.Engine;logfile=Build.log;errorsonly;Encoding=UTF-8", _info.ProjectDir);
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
+            Util.CheckCmdMessageThrewException(message);
 
             //pack
             //nuget pack
             //nuget pack Fanews.UserManage.ThriftNet45.nuspec
             message = Util.CmdRunAndReturn($"{_nugetPath} pack {_info.ThriftNamespaceName}Net45.nuspec", _info.ProjectDir);
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
+            Util.CheckCmdMessageThrewException(message);
 
 
             if (_info.NugetPush)
@@ -46,7 +48,8 @@ namespace ThriftService
                 //nuget push Fanews.UserManage.ThriftN45.1.2018.11.9141.nupkg -source http://10.252.148.40/nuget -apikey fanews@2018ngt!@#$
                 var nugetpackName = $"{_info.ThriftNamespaceName}Net45.{exprotProject.Version}.nupkg";
                 message = Util.CmdRunAndReturn($"{_nugetPath} push {nugetpackName} -source http://10.252.148.40/nuget -apikey {NugetApiKey}", _info.ProjectDir);
-                Console.WriteLine(message);
+                //Console.WriteLine(message);
+                Util.CheckCmdMessageThrewException(message);
             }
 
             OpenFolder(_info.ProjectDir);
@@ -56,7 +59,8 @@ namespace ThriftService
         {
             string dosCommand = $"{_thriftPath} --gen csharp:async {_info.ThriftFile} ";
             string message = Util.CmdRunAndReturn(dosCommand, _info.WorkDir);
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
+            Util.CheckCmdMessageThrewException(message);
 
             if (isOpen)
             {

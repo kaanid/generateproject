@@ -82,30 +82,28 @@ namespace ThriftService
                 // 前面一个命令不管是否执行成功都执行后面(exit)命令，如果不执行exit命令，后面调用ReadToEnd()方法会假死
                 process.StandardInput.WriteLine("exit");
 
-                //string m2= process.StandardError.ReadToEnd();
-
                 StringBuilder sb = new StringBuilder();
                 StreamReader reader = process.StandardOutput;//获取exe处理之后的输出信息
-                string curLine = reader.ReadLine(); //获取错误信息到error
-                while (!reader.EndOfStream)
+                string curLine = string.Empty; //获取错误信息到error
+
+                do
                 {
+                    curLine = reader.ReadLine();
                     if (!string.IsNullOrEmpty(curLine))
                     {
                         sb.Append(curLine);
-                        //Console.WriteLine(curLine);
                     }
-                    curLine = reader.ReadLine();
                 }
+                while (!reader.EndOfStream);
                 reader.Close(); //close进程
 
                 string err = process.StandardError.ReadToEnd();
-
 
                 process.WaitForExit(1000);  //等待程序执行完退出进程
                 process.Close();
 
                 if (!string.IsNullOrWhiteSpace(err))
-                    return $"Error:"+err;
+                    return $"Error::"+err;
 
                 return sb.ToString().Substring(sb.ToString().IndexOf('>')+1);
 
@@ -173,6 +171,12 @@ namespace ThriftService
                     File.Copy(t, Path.Combine(str2, Path.GetFileName(t)));
                 }
             }
+        }
+
+        public static void CheckCmdMessageThrewException(string message)
+        {
+            if (message.StartsWith("Error::"))
+                throw new Exception($"CMD Exception {message}");
         }
     }
 }

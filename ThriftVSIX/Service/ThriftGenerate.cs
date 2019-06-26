@@ -14,6 +14,7 @@ namespace ThriftService
         protected readonly string _thriftPath;
         protected readonly string _resourcesDir;
         protected const string NugetApiKey= "fanews@2018nuget";
+        private const string PatternNamespace = "^namespace csharp ([A-z0-9_.]+)";
 
         public ThriftGenerate(string filePath,NetVersion netVersion)
         {
@@ -33,10 +34,10 @@ namespace ThriftService
             string dllName = string.Empty;
             if (NetVersion.Net45 == netVersion)
             {
-                dllName = GetRegexGroup(textThrift, "^namespace csharp ([A-z_.]+)");
+                dllName = GetRegexGroup(textThrift, PatternNamespace);
             }else
             {
-                dllName = GetRegexGroup(textThrift, "^namespace netcore ([A-z_.]+)");
+                dllName = GetRegexGroup(textThrift, PatternNamespace);
             }
 
             if(string.IsNullOrWhiteSpace(dllName))
@@ -90,9 +91,9 @@ namespace ThriftService
             Util.CmdRun(dosCommand, _info.WorkDir);
         }
 
-        private string GetRegexGroup(string text, string patten, int index = 1, RegexOptions regexOptions = RegexOptions.Multiline)
+        private string GetRegexGroup(string text, string pattern, int index = 1, RegexOptions regexOptions = RegexOptions.Multiline)
         {
-            var m = Regex.Match(text, patten, regexOptions);
+            var m = Regex.Match(text, pattern, regexOptions);
             if (m.Success && m.Groups.Count > index)
             {
                 return m.Groups[index].Value;
