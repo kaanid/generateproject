@@ -12,10 +12,10 @@
     <author>
       <name>Fanews</name>
     </author>
-    <content type="application/octet-stream" src="/ThriftVSIX.1.0.9.8.vsix" />
+    <content type="application/octet-stream" src="/ThriftVSIX.vsix" />
     <Vsix xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/developer/vsx-syndication-schema/2010">
       <Id>ThriftVSIX.7f558650-bddf-4849-842f-baf069772eda</Id>
-      <Version>1.0.9.8</Version>
+      <Version>1.0.9.9</Version>
       <References />
       <Rating xsi:nil="true" />
       <RatingCount xsi:nil="true" />
