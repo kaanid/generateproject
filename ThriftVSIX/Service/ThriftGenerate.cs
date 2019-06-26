@@ -45,7 +45,7 @@ namespace ThriftService
                 throw new ArgumentNullException($"namespace {NetVersion.Net45} is null");
             }
 
-            string thriftServiceClassName = GetRegexGroup(textThrift, "^service ([A-z_]+)");
+            string thriftServiceClassName = GetRegexGroup(textThrift, "^service ([A-z0-9_]+)");
             string serviceName = GetRegexGroup(textThrift, "^# servicename=([A-z_]+)");
             string host = GetRegexGroup(textThrift, "^# host=([0-9.]+)");
             string portStr = GetRegexGroup(textThrift, "^# port=(\\d+)");
