@@ -131,11 +131,28 @@ namespace ThriftService
 
         public static string GetExpansionToolPath()
         {
-            var plus = Directory.GetDirectories("C:\\Users\\Fanwen\\AppData\\Local\\Microsoft\\VisualStudio\\", "ThriftVSIX", SearchOption.AllDirectories);
+            var plus = Directory.GetDirectories("C:\\Users\\Fanwen\\AppData\\Local\\Microsoft\\VisualStudio\\", "Resources", SearchOption.AllDirectories);
             if (plus.Length == 0)
-                throw new ArgumentNullException("未安装插件");
+                throw new ArgumentNullException("未安装插件[0]");
 
-            return plus[0];
+            foreach(var p in plus)
+            {
+                if (!p.Contains("Extensions"))
+                    continue;
+
+                //var p2= Path.Combine(p, "..");
+                var p2 = p.Replace("\\Resources","");
+
+                //ThriftVSIX
+                var files=Directory.GetFiles(p2, "ThriftVSIX.dll", SearchOption.AllDirectories);
+                if (files.Length == 0)
+                    continue;
+
+                return p2;
+            }
+
+            throw new ArgumentNullException("未安装插件[1]");
+            //return plus[0];
         }
 
         public static string GetExpansionToolResourcesPath()

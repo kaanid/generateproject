@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="ThriftVSIX.7f558650-bddf-4849-842f-baf069772eda" Version="1.0.9.8" Language="en-US" Publisher="Fanews" />
+        <Identity Id="ThriftVSIX.7f558650-bddf-4849-842f-baf069772eda" Version="1.0.9.9" Language="en-US" Publisher="Fanews" />
         <DisplayName>ThriftVSIX</DisplayName>
         <Description xml:space="preserve">Empty VSIX Project.</Description>
     </Metadata>
