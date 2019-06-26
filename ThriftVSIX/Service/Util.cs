@@ -166,7 +166,7 @@ namespace ThriftService
             var resourcesPath = Path.Combine(toolPath, "Resources");
 
             if (!Directory.Exists(resourcesPath))
-                throw new ArgumentNullException("资源不存在");
+                throw new ArgumentNullException($"资源不存在 version:{Util.ExtensionToolVersion} path:{resourcesPath}");
 
             return resourcesPath;
         }
