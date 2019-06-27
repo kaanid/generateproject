@@ -131,7 +131,7 @@ namespace ThriftService
 
         public static string GetExpansionToolPath()
         {
-            var plus = Directory.GetDirectories("C:\\Users\\Fanwen\\AppData\\Local\\Microsoft\\VisualStudio\\", "Resources", SearchOption.AllDirectories);
+            var plus = Directory.GetDirectories($"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Microsoft\\VisualStudio\\", "Resources", SearchOption.AllDirectories);
             if (plus.Length == 0)
                 throw new ArgumentNullException("未安装插件[0]");
 
