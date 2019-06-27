@@ -16,8 +16,18 @@ namespace ThriftService
 
         public override void GenerateProject()
         {
+            //C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\MSBuild.exe
             string _nugetPath = GetEXEFilePath("nuget.exe");
-            string _msbuildPath = "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\MSBuild\\15.0\\Bin\\MSBuild.exe\"";
+
+            string vsPath = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\MSBuild\\15.0\\Bin\\MSBuild.exe";
+            if(!File.Exists(vsPath))
+            {
+                vsPath = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\MSBuild\\15.0\\Bin\\MSBuild.exe";
+                if (!File.Exists(vsPath))
+                    throw new Exception("Microsoft Visual Studio 2017 MSBuild 未找到");
+            }
+
+            string _msbuildPath = $"\"{vsPath}\"";
 
             SetCSFileList();
 
