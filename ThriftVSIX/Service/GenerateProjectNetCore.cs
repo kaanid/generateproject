@@ -72,7 +72,7 @@ namespace ThriftService
                 .Replace("$dllname$", _info.ThriftNamespaceName);
 
             var newextensionsTempPath = Path.Combine(newPath, $"Extensions.cs");
-            File.WriteAllText(newClientPath, extensionsTempText);
+            File.WriteAllText(newextensionsTempPath, extensionsTempText);
 
         }
     }
