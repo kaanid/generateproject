@@ -58,7 +58,9 @@
     <Content Include="Resources\net45\Properties\AssemblyInfo.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Resources\netcore\Extensionstemp.cs" />
+    <Content Include="Resources\netcore\Extensionstemp.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Compile Include="Service\GenerateProject.cs" />
     <Compile Include="Service\GenerateProjectNet45.cs" />
     <Compile Include="Service\GenerateProjectNetCore.cs" />
