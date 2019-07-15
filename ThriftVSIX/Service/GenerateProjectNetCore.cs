@@ -66,6 +66,14 @@ namespace ThriftService
             Directory.CreateDirectory(Path.Combine(newPath, "Configs"));
             var newJsonPath = Path.Combine(newPath, "Configs", $"{_info.ThriftNamespaceName}Service.json");
             File.WriteAllText(newJsonPath, textJson);
+
+            var extensionsTempText = File.ReadAllText(_tempPath + "\\Extensionstemp.cs");
+            extensionsTempText = extensionsTempText
+                .Replace("$dllname$", _info.ThriftNamespaceName);
+
+            var newextensionsTempPath = Path.Combine(newPath, $"Extensions.cs");
+            File.WriteAllText(newClientPath, extensionsTempText);
+
         }
     }
 }
