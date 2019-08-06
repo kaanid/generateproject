@@ -19,13 +19,7 @@ namespace ThriftService
 
         public override void Run()
         {
-            //$guid$
-            //$dllname$
-            //$dllpath$
-            //$compilelist$
-
             var path = Path.Combine(_tempPath, "temp.csproj");
-
             var text = File.ReadAllText(path);
             text = text
 
@@ -69,7 +63,8 @@ namespace ThriftService
 
             var extensionsTempText = File.ReadAllText(_tempPath + "\\Extensionstemp.cs");
             extensionsTempText = extensionsTempText
-                .Replace("$dllname$", _info.ThriftNamespaceName);
+                .Replace("$dllname$", _info.ThriftNamespaceName)
+                .Replace("$servicename$", _info.ServiceName);
 
             var newextensionsTempPath = Path.Combine(newPath, $"Extensions.cs");
             File.WriteAllText(newextensionsTempPath, extensionsTempText);

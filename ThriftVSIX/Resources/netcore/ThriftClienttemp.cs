@@ -108,7 +108,7 @@ namespace $dllname$
             {
                 LoadConf();
 
-                return ClientStartup.GetByPoolAsync<Client, IAsync>(config, visitAppName, _log);
+                return ClientStartup.GetByPoolAsync<Client, IAsync>(config, visitAppName, _logger);
             }
         }
 
