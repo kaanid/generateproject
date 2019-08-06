@@ -11,16 +11,49 @@ namespace $dllname$
     public interface IThriftClient
     {
         IAsync C { get; }
+
+        IAsync ClientOne { get; }
     }
-    public partial class ThriftClient
+
+    public partial class ThriftClient : IThriftClient
     {
         private static string visitAppName = "App";
-        private const string configFileName= "Configs/$dllname$Service.json";
-        private static ILogger<ThriftClient> _log = new LoggerFactory()
-            .AddConsole()
-            .AddDebug()
-            .CreateLogger<ThriftClient>();
-        public static ThriftClientConfig config {private set;get;}
+        private const string configFileName = "Configs/Fanews.UserManage.ThriftService.json";
+        private readonly ILogger<ThriftClient> _logger;
+        private readonly IConfiguration _configuration;
+        public static ThriftClientConfig config { private set; get; }
+
+        public ThriftClient(ILogger<ThriftClient> logger, IConfiguration configuration)
+        {
+            _logger = logger;
+            _configuration = configuration;
+            _instance = this;
+        }
+
+        private static ThriftClient _instance;
+        public static ThriftClient Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    ILogger<ThriftClient> _log = new LoggerFactory()
+                    .AddConsole()
+                    .AddDebug()
+                    .CreateLogger<ThriftClient>();
+
+                    var _config = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json", true)
+                    .AddJsonFile("appsettings.Development.json", true)
+                    .AddJsonFile("appsettings.Production.json", true)
+                    .AddJsonFile(configFileName, false, false)
+                    .Build();
+
+                    _instance = new ThriftClient(_log, _config);
+                }
+                return _instance;
+            }
+        }
 
         public static void Init(ThriftClientConfig thriftClientConfig, string formAppName = "App")
         {
@@ -44,20 +77,15 @@ namespace $dllname$
             SetFreeEvent();
         }
 
-        private static void LoadConf()
+        private void LoadConf()
         {
             if (config != null)
             {
                 return;
             }
 
-            var _config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", true)
-                .AddJsonFile(configFileName, false, false)
-                .Build();
-
-            visitAppName = _config["AppName"]?.ToString() ?? visitAppName;
-            config = _config.Get<ThriftClientConfig>();
+            visitAppName = _configuration["AppName"]?.ToString() ?? visitAppName;
+            config = _configuration.Get<ThriftClientConfig>();
             if (config == null)
             {
                 throw new ArgumentNullException("ThriftClientConfig");
@@ -67,14 +95,14 @@ namespace $dllname$
         }
 
         private static void SetFreeEvent()
-    {
+        {
             $dllname$.$serviceclassname$.Client.ExcetinedEvent += (method, clinet) =>
             {
                 ClientStartup.SetFree(typeof(Client), clinet);
             };
         }
 
-        public static Task<IAsync> ClientAsync
+        public Task<IAsync> ClientAsync
         {
             get
             {
@@ -84,7 +112,7 @@ namespace $dllname$
             }
         }
 
-        public static IAsync Client
+        public IAsync Client
         {
             get
             {
@@ -100,7 +128,7 @@ namespace $dllname$
             }
         }
 
-        public static IAsync ClientOne
+        public IAsync ClientOne
         {
             get
             {
@@ -108,5 +136,5 @@ namespace $dllname$
                 return ClientStartup.Get<Client>(config);
             }
         }
-}
+    }
 }
