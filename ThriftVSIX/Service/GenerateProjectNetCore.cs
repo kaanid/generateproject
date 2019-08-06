@@ -64,7 +64,7 @@ namespace ThriftService
             var extensionsTempText = File.ReadAllText(_tempPath + "\\Extensionstemp.cs");
             extensionsTempText = extensionsTempText
                 .Replace("$dllname$", _info.ThriftNamespaceName)
-                .Replace("$servicename$", _info.ServiceName);
+                .Replace("$serviceclassname$", _info.ThriftServiceClassName);
 
             var newextensionsTempPath = Path.Combine(newPath, $"Extensions.cs");
             File.WriteAllText(newextensionsTempPath, extensionsTempText);
