@@ -18,7 +18,7 @@ namespace $dllname$
     public partial class ThriftClient : IThriftClient
     {
         private static string visitAppName = "App";
-        private const string configFileName = "Configs/Fanews.UserManage.ThriftService.json";
+        private const string configFileName = "Configs/$dllname$Service.json";
         private readonly ILogger<ThriftClient> _logger;
         private readonly IConfiguration _configuration;
         public static ThriftClientConfig config { private set; get; }
@@ -42,14 +42,14 @@ namespace $dllname$
                     .AddDebug()
                     .CreateLogger<ThriftClient>();
 
-                    var _config = new ConfigurationBuilder()
-                    .AddJsonFile("appsettings.json", true)
-                    .AddJsonFile("appsettings.Development.json", true)
-                    .AddJsonFile("appsettings.Production.json", true)
-                    .AddJsonFile(configFileName, false, false)
-                    .Build();
-
-                    _instance = new ThriftClient(_log, _config);
+                    IConfiguration configuration = null;
+                    if (config == null)
+                    {
+                        configuration = new ConfigurationBuilder()
+                            .AddJsonFile(configFileName, false, false)
+                            .Build();
+                    }
+                    _instance = new ThriftClient(_log, configuration);
                 }
                 return _instance;
             }
@@ -88,7 +88,12 @@ namespace $dllname$
             config = _configuration.Get<ThriftClientConfig>();
             if (config == null)
             {
-                throw new ArgumentNullException("ThriftClientConfig");
+                IConfiguration configuration = new ConfigurationBuilder()
+                    .AddJsonFile(configFileName, false, false)
+                    .Build();
+                config = _configuration.Get<ThriftClientConfig>();
+                if (config == null)
+                    throw new ArgumentNullException("ThriftClientConfig");
             }
 
             SetFreeEvent();
