@@ -79,24 +79,29 @@ namespace $dllname$
 
         private void LoadConf()
         {
-            if (config != null)
+            if (!InvaildConfig(config))
             {
                 return;
             }
 
             visitAppName = _configuration["AppName"]?.ToString() ?? visitAppName;
             config = _configuration.Get<ThriftClientConfig>();
-            if (config == null)
+            if (InvaildConfig(config))
             {
                 IConfiguration configuration = new ConfigurationBuilder()
                     .AddJsonFile(configFileName, false, false)
                     .Build();
                 config = _configuration.Get<ThriftClientConfig>();
-                if (config == null)
+                if (InvaildConfig(config))
                     throw new ArgumentNullException("ThriftClientConfig");
             }
 
             SetFreeEvent();
+        }
+
+        private bool InvaildConfig(ThriftClientConfig config)
+        {
+            return config == null || config.Port == 0 || (config.Consul == null && config.IPHost == null);
         }
 
         private static void SetFreeEvent()
