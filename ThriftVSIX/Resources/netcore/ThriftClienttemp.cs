@@ -43,10 +43,9 @@ namespace $dllname$
                     .CreateLogger<ThriftClient>();
 
                     IConfiguration configuration = null;
-                    if (config == null)
+                    if (InvaildConfig(config))
                     {
                         configuration = new ConfigurationBuilder()
-                            .AddJsonFile(configFileName, false, false)
                             .Build();
                     }
                     _instance = new ThriftClient(_log, configuration);
@@ -57,7 +56,7 @@ namespace $dllname$
 
         public static void Init(ThriftClientConfig thriftClientConfig, string formAppName = "App")
         {
-            if (config != null)
+            if (!InvaildConfig(config))
                 return;
 
             if (thriftClientConfig == null)
@@ -85,7 +84,7 @@ namespace $dllname$
             }
 
             visitAppName = _configuration["AppName"]?.ToString() ?? visitAppName;
-            config = _configuration.Get<ThriftClientConfig>();
+            config = _configuration.GetSection("$serviceclassname$Config").Get<ThriftClientConfig>();
             if (InvaildConfig(config))
             {
                 IConfiguration configuration = new ConfigurationBuilder()
@@ -99,7 +98,7 @@ namespace $dllname$
             SetFreeEvent();
         }
 
-        private bool InvaildConfig(ThriftClientConfig config)
+        private static bool InvaildConfig(ThriftClientConfig config)
         {
             return config == null || config.Port == 0 || (config.Consul == null && config.IPHost == null);
         }
