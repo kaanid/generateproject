@@ -84,13 +84,13 @@ namespace $dllname$
             }
 
             visitAppName = _configuration["AppName"]?.ToString() ?? visitAppName;
-            config = _configuration.GetSection("$serviceclassname$Config").Get<ThriftClientConfig>();
+            config = _configuration.GetSection("$serviceclassname$ThriftConfig").Get<ThriftClientConfig>();
             if (InvaildConfig(config))
             {
                 IConfiguration configuration = new ConfigurationBuilder()
                     .AddJsonFile(configFileName, false, false)
                     .Build();
-                config = _configuration.Get<ThriftClientConfig>();
+                config = configuration.Get<ThriftClientConfig>();
                 if (InvaildConfig(config))
                     throw new ArgumentNullException("ThriftClientConfig");
             }
