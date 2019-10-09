@@ -10,7 +10,8 @@ namespace $dllname$
 {
     public interface IThriftClient
     {
-        IAsync C { get; }
+        IAsync Client { get; }
+
         Task<IAsync> ClientAsync { get; }
 
         IAsync ClientOne { get; }
@@ -127,14 +128,6 @@ namespace $dllname$
             get
             {
                 return ClientAsync.GetAwaiter().GetResult();
-            }
-        }
-
-        public IAsync C
-        {
-            get
-            {
-                return Client;
             }
         }
 
