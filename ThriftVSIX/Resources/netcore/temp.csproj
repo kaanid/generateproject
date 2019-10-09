@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fanews.Thrift.ThriftClient" Version="1.0.6.16" />
+    <PackageReference Include="Fanews.Thrift.ThriftClient" Version="1.0.6.19" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
   </ItemGroup>

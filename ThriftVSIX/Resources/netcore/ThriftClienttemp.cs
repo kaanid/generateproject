@@ -11,6 +11,7 @@ namespace $dllname$
     public interface IThriftClient
     {
         IAsync C { get; }
+        Task<IAsync> ClientAsync { get; }
 
         IAsync ClientOne { get; }
     }
