@@ -39,10 +39,12 @@ namespace $dllname$
             {
                 if (_instance == null)
                 {
-                    ILogger<ThriftClient> _log = new LoggerFactory()
-                    .AddConsole()
-                    .AddDebug()
-                    .CreateLogger<ThriftClient>();
+                    ILogger<ThriftClient> _log = LoggerFactory.Create(builder =>
+                    {
+                        builder
+                            .AddConsole()
+                            .AddDebug();
+                    }).CreateLogger<ThriftClient>();
 
                     IConfiguration configuration = null;
                     if (InvaildConfig(config))
