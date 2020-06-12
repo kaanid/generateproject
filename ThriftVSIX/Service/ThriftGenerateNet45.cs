@@ -19,13 +19,7 @@ namespace ThriftService
             //C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\MSBuild.exe
             string _nugetPath = GetEXEFilePath("nuget.exe");
 
-            string vsPath = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\MSBuild\\15.0\\Bin\\MSBuild.exe";
-            if(!File.Exists(vsPath))
-            {
-                vsPath = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\MSBuild\\15.0\\Bin\\MSBuild.exe";
-                if (!File.Exists(vsPath))
-                    throw new Exception("Microsoft Visual Studio 2017 MSBuild 未找到");
-            }
+            string vsPath = GetMSBuildPath();
 
             string _msbuildPath = $"\"{vsPath}\"";
 
@@ -76,6 +70,27 @@ namespace ThriftService
             {
                 OpenSoureFolder();
             }
+        }
+
+        private string GetMSBuildPath()
+        {
+            string path2 = "C:\\Program Files (x86)\\Microsoft Visual Studio\\";
+            var files = System.IO.Directory.GetFiles(path2, "MSBuild.exe", SearchOption.AllDirectories);
+            if (files.Length == 0)
+                throw new NotSupportedException("MSBuild.exe not found");
+
+            string[] versions = { "2019", "2017" };
+            foreach (var version in versions)
+            {
+                foreach (var file in files)
+                {
+                    if (file.Contains(version) && file.EndsWith("Bin\\MSBuild.exe"))
+                    {
+                        return file;
+                    }
+                }
+            }
+            return files[0];
         }
     }
 }
