@@ -8,21 +8,13 @@
     <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
     <Version>$version$</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Fanews.Thrift.ThriftClient" Version="1.0.12.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.1" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Update="Configs\$dllname$Service.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <Pack>true</Pack>
-      <PackageCopyToOutput>true</PackageCopyToOutput>
-      <PackagePath>contentFiles\any\any\</PackagePath>
-      <BuildAction>None</BuildAction>
-    </None>
   </ItemGroup>
 
 </Project>
