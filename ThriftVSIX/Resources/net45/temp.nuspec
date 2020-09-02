@@ -22,5 +22,6 @@
   <files>
     <file src="Configs\*.json" target="Content\Configs\"/>
     <file src="bin\Release\$dllfilefullname$Net45.dll" target="lib\net45\"/>
+	<file src="bin\Release\$dllfilefullname$Net45.xml" target="lib\net45\"/>
   </files>
 </package>
