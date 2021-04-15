@@ -66,6 +66,8 @@ namespace ThriftService
             Process process = new Process();
             try
             {
+                LoggerText($"CmdRunAndReturn dosCommand:{dosCommand} currentPath:{currentPath}");
+
                 process.StartInfo.UseShellExecute = false;   //是否使用操作系统shell启动 
                 process.StartInfo.CreateNoWindow = true;   //是否在新窗口中启动该进程的值 (不显示程序窗口)
                 process.StartInfo.RedirectStandardInput = true;  // 接受来自调用程序的输入信息 
@@ -105,7 +107,9 @@ namespace ThriftService
                 if (!string.IsNullOrWhiteSpace(err))
                     return $"Error::"+err;
 
-                return sb.ToString().Substring(sb.ToString().IndexOf('>')+1);
+                string message = sb.ToString();
+                LoggerText(message);
+                return message.Substring(message.IndexOf('>')+1);
 
             }
             catch (Win32Exception e)
@@ -202,6 +206,15 @@ namespace ThriftService
         {
             if (message.StartsWith("Error::"))
                 throw new Exception($"CMD Exception {message}");
+        }
+
+        public static void LoggerText(string message)
+        {
+            var debugFile = Path.Combine(Directory.GetCurrentDirectory(), $"debug_{DateTime.Now.ToString("yyyyMMdd")}.txt");
+            using (StreamWriter streamWriter = new StreamWriter(debugFile))
+            {
+                streamWriter.WriteLine($"{DateTime.Now} {message}");
+            }
         }
     }
 }
