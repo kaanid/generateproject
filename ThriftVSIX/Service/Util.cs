@@ -176,7 +176,11 @@ namespace ThriftService
             string newPath = $"{Path.GetTempPath()}thrift\\dependency\\";
             if (Directory.Exists(newPath))
             {
-                return;
+                var hasfile=Directory.GetFiles(newPath, "*", SearchOption.AllDirectories).Length>0;
+                if (hasfile)
+                    return;
+
+                Directory.Delete(newPath, true);
             }
 
             var fList = Directory.GetDirectories(resourcesPath + "\\dependency\\", "*", SearchOption.AllDirectories);
