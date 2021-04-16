@@ -210,7 +210,7 @@ namespace ThriftService
 
         public static void LoggerText(string message)
         {
-            var debugFile = Path.Combine(Directory.GetCurrentDirectory(), $"debug_{DateTime.Now.ToString("yyyyMMdd")}.txt");
+            var debugFile = Path.Combine(Path.GetTempPath(),"thrift", $"debug_{DateTime.Now.ToString("yyyyMMdd")}.txt");
             using (StreamWriter streamWriter = new StreamWriter(debugFile))
             {
                 streamWriter.WriteLine($"{DateTime.Now} {message}");
