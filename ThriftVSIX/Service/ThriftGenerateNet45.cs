@@ -51,7 +51,7 @@ namespace ThriftService
                 //发布 push
                 //nuget push Fanews.UserManage.ThriftN45.1.2018.11.9141.nupkg -source http://10.252.148.40/nuget -apikey fanews@2018ngt!@#$
                 var nugetpackName = $"{_info.ThriftNamespaceName}Net45.{exprotProject.Version}.nupkg";
-                message = Util.CmdRunAndReturn($"{_nugetPath} push {nugetpackName} -source http://10.252.148.40/nuget -apikey {NugetApiKey}", _info.ProjectDir);
+                message = Util.CmdRunAndReturn($"{_nugetPath} push {nugetpackName} -source http://nuget.hzfanews.fw/nuget -apikey {NugetApiKey}", _info.ProjectDir);
                 //Console.WriteLine(message);
                 Util.CheckCmdMessageThrewException(message);
             }

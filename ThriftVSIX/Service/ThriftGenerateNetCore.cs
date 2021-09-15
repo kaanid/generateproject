@@ -27,7 +27,7 @@ namespace ThriftService
 
             //还原nuget
             //dotnet restore -s http://10.252.148.40/nuget -s https://api.nuget.org/v3/index.json
-            string message = Util.CmdRunAndReturn("dotnet restore -s http://10.252.148.40/nuget -s https://api.nuget.org/v3/index.json", _info.ProjectDir);
+            string message = Util.CmdRunAndReturn("dotnet restore -s http://nuget.hzfanews.fw/nuget -s https://api.nuget.org/v3/index.json", _info.ProjectDir);
             //Console.WriteLine(message);
             Util.CheckCmdMessageThrewException(message);
 
@@ -49,7 +49,7 @@ namespace ThriftService
                 //发布 push
                 //dotnet nuget push Fanews.UserManage.Thrift.1.2018.11.9141.nupkg -s http://10.252.148.40/nuget -k fanews@2018ngt!@#$
                 var nugetpackName = $"{_info.ThriftNamespaceName}.{exprotProject.Version}.nupkg";
-                message = Util.CmdRunAndReturn($"dotnet nuget push {nugetpackName} -s http://10.252.148.40/nuget -k {NugetApiKey}", nugetpackDir);
+                message = Util.CmdRunAndReturn($"dotnet nuget push {nugetpackName} -s http://nuget.hzfanews.fw/nuget -k {NugetApiKey}", nugetpackDir);
                 Console.WriteLine(message);
             }
 
