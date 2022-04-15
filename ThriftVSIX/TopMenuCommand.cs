@@ -5,6 +5,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using EnvDTE;
+using EnvDTE80;
+using Microsoft;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using ThriftService;
@@ -12,14 +14,13 @@ using Task = System.Threading.Tasks.Task;
 
 namespace ThriftVSIX
 {
-    /// <summary>
-    /// Command handler
-    /// </summary>
-    internal sealed class TopMenuCommand
+    public class DynamicMenuCommand : OleMenuCommand
     {
-        /// <summary>
-        /// Command ID.
-        /// </summary>
+        private Predicate<int> _matches;
+        private int _matchedCommandId;
+
+        public const string guidDynamicMenuPackageCmdSet = "b0af3d0e-60af-4dbe-91cb-510d7871a8bd";
+
         public const int CommandId = 0x0100;
         public const int SubMenu = 0x1100;
         public const int SubCommandId1 = 0x0101;
@@ -27,259 +28,155 @@ namespace ThriftVSIX
         public const int SubCommandId3 = 0x0103;
         public const int SubCommandId4 = 0x0104;
 
-        /// <summary>
-        /// Command menu group (command set GUID).
-        /// </summary>
-        public static readonly Guid CommandSet = new Guid("b0af3d0e-60af-4dbe-91cb-510d7871a8bd");
-
-        /// <summary>
-        /// VS Package that provides this command, not null.
-        /// </summary>
-        private readonly AsyncPackage package;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TopMenuCommand"/> class.
-        /// Adds our command handlers for menu (commands must exist in the command table file)
-        /// </summary>
-        /// <param name="package">Owner package, not null.</param>
-        /// <param name="commandService">Command service to add command to, not null.</param>
-        private TopMenuCommand(AsyncPackage package, OleMenuCommandService commandService)
+        public DynamicMenuCommand(
+            CommandID rootId,
+            Predicate<int> matches,
+            EventHandler invokeHandler,
+            EventHandler beforeQueryStatusHandler)
+            : base(invokeHandler, null /*changeHandler*/, beforeQueryStatusHandler, rootId)
         {
-            this.package = package ?? throw new ArgumentNullException(nameof(package));
-            commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
-
-            var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new OleMenuCommand(this.Execute, menuCommandID);
-            menuItem.BeforeQueryStatus += menuItem_BeforeQueryStatus;
-            commandService.AddCommand(menuItem);
-
-            var subMenuId = new CommandID(CommandSet, SubMenu);
-            var subMenuItem = new OleMenuCommand(this.Execute, subMenuId);
-            subMenuItem.BeforeQueryStatus += menuItem_BeforeQueryStatus;
-            commandService.AddCommand(subMenuItem);
-
-            CommandID subCommandID1 = new CommandID(CommandSet, SubCommandId1);
-            OleMenuCommand subItem1 = new OleMenuCommand(new EventHandler(SubItemCallback1), subCommandID1);
-            //subItem1.BeforeQueryStatus+= menuItem_BeforeQueryStatus; 
-            commandService.AddCommand(subItem1);
-
-            CommandID subCommandID2 = new CommandID(CommandSet, SubCommandId2);
-            OleMenuCommand subItem2 = new OleMenuCommand(new EventHandler(SubItemCallback2), subCommandID2);
-            //subItem2.BeforeQueryStatus += menuItem_BeforeQueryStatus;
-            commandService.AddCommand(subItem2);
-
-            CommandID subCommandID3 = new CommandID(CommandSet, SubCommandId3);
-            OleMenuCommand subItem3 = new OleMenuCommand(new EventHandler(SubItemCallback3), subCommandID3);
-            //subItem3.BeforeQueryStatus += menuItem_BeforeQueryStatus;
-            commandService.AddCommand(subItem3);
-
-            CommandID subCommandID4 = new CommandID(CommandSet, SubCommandId4);
-            OleMenuCommand subItem4 = new OleMenuCommand(new EventHandler(SubItemCallback4), subCommandID4);
-            //subItem4.BeforeQueryStatus += menuItem_BeforeQueryStatus;
-            commandService.AddCommand(subItem4);
+            _matches = matches ?? throw new ArgumentNullException("matches");
         }
 
-        /// <summary>
-        /// Gets the instance of the command.
-        /// </summary>
-        public static TopMenuCommand Instance
+        public override bool DynamicItemMatch(int cmdId)
         {
-            get;
-            private set;
+            if (_matches(cmdId))
+            {
+                _matchedCommandId = cmdId;
+                return true;
+            }
+            _matchedCommandId = 0;
+            return false;
+        }
+    }
+
+    class DynamicMenu
+    {
+        private DTE2 _dte2;
+        private Package _package;
+        public DynamicMenu(Package package)
+        {
+            if (package == null)
+            {
+                throw new ArgumentNullException(nameof(package));
+            }
+
+            _package = package;
+
+            OleMenuCommandService commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            if (commandService != null)
+            {
+                // Add the DynamicItemMenuCommand for the expansion of the root item into N items at run time.
+                CommandID dynamicItemRootId = new CommandID(new Guid(DynamicMenuCommand.guidDynamicMenuPackageCmdSet), DynamicMenuCommand.SubMenu);
+                DynamicMenuCommand dynamicMenuCommand = new DynamicMenuCommand(dynamicItemRootId,
+                    IsValidDynamicItem,
+                    OnInvokedDynamicItem,
+                    OnBeforeQueryStatusDynamicItem);
+                commandService.AddCommand(dynamicMenuCommand);
+
+                CommandID dynamicItemRootId1 = new CommandID(new Guid(DynamicMenuCommand.guidDynamicMenuPackageCmdSet), DynamicMenuCommand.SubCommandId1);
+                DynamicMenuCommand dynamicMenuCommand1 = new DynamicMenuCommand(dynamicItemRootId1,
+                    IsValidDynamicItem,
+                    OnInvokedDynamicItem,
+                    null);
+                commandService.AddCommand(dynamicMenuCommand1);
+
+                CommandID dynamicItemRootId2 = new CommandID(new Guid(DynamicMenuCommand.guidDynamicMenuPackageCmdSet), DynamicMenuCommand.SubCommandId2);
+                DynamicMenuCommand dynamicMenuCommand2 = new DynamicMenuCommand(dynamicItemRootId2,
+                    IsValidDynamicItem,
+                    OnInvokedDynamicItem,
+                    null);
+                commandService.AddCommand(dynamicMenuCommand2);
+
+                CommandID dynamicItemRootId3 = new CommandID(new Guid(DynamicMenuCommand.guidDynamicMenuPackageCmdSet), DynamicMenuCommand.SubCommandId3);
+                DynamicMenuCommand dynamicMenuCommand3 = new DynamicMenuCommand(dynamicItemRootId3,
+                    IsValidDynamicItem,
+                    OnInvokedDynamicItem,
+                    null);
+                commandService.AddCommand(dynamicMenuCommand3);
+
+                CommandID dynamicItemRootId4 = new CommandID(new Guid(DynamicMenuCommand.guidDynamicMenuPackageCmdSet), DynamicMenuCommand.SubCommandId4);
+                DynamicMenuCommand dynamicMenuCommand4 = new DynamicMenuCommand(dynamicItemRootId4,
+                    IsValidDynamicItem,
+                    OnInvokedDynamicItem,
+                    null);
+                commandService.AddCommand(dynamicMenuCommand4);
+            }
+
+            _dte2 = (DTE2)ServiceProvider.GetService(typeof(DTE));
+            Assumes.Present(_dte2);
         }
 
-        /// <summary>
-        /// Gets the service provider from the owner package.
-        /// </summary>
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider
+        private System.IServiceProvider ServiceProvider
         {
             get
             {
-                return this.package;
+                return _package;
             }
         }
 
-        /// <summary>
-        /// Initializes the singleton instance of the command.
-        /// </summary>
-        /// <param name="package">Owner package, not null.</param>
-        public static async Task InitializeAsync(AsyncPackage package)
+        private bool IsValidDynamicItem(int commandId)
         {
-            // Switch to the main thread - the call to AddCommand in TopMenuCommand's constructor requires
-            // the UI thread.
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-
-            OleMenuCommandService commandService = await package.GetServiceAsync((typeof(IMenuCommandService))) as OleMenuCommandService;
-            Instance = new TopMenuCommand(package, commandService);
+            // The match is valid if the command ID is >= the id of our root dynamic start item
+            // and the command ID minus the ID of our root dynamic start item
+            // is less than or equal to the number of projects in the solution.
+            return commandId >= DynamicMenuCommand.SubCommandId1 && commandId <= DynamicMenuCommand.SubCommandId4;
         }
-
-        /// <summary>
-        /// This function is the callback used to execute the command when the menu item is clicked.
-        /// See the constructor to see how the menu item is associated with this function using
-        /// OleMenuCommandService service and MenuCommand class.
-        /// </summary>
-        /// <param name="sender">Event sender.</param>
-        /// <param name="e">Event args.</param>
-        private void Execute(object sender, EventArgs e)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            string title = "TopMenuCommand";
-
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.package,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-        }
-
-        private void SubItemCallback1(object sender, EventArgs e)
+        private void OnInvokedDynamicItem(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var dte = GetDTE();
-            if (dte == null)
-                return;
-
+            OleMenuCommand menuCommand = null;
             try
             {
-                var activeFile = dte.ActiveDocument.FullName;
-                ThriftGenerate ser = new ThriftGenerateNet45(activeFile);
-                ser.GenerateProject();
-            }
-            catch(Exception ex)
-            {
-                string message = ex.Message;
-                VsShellUtilities.ShowMessageBox(
-                this.package,
-                "Thrift Client Net45",
-                message,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-            }
-        }
-
-        private void SubItemCallback2(object sender, EventArgs e)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var dte = GetDTE();
-            if (dte == null)
-                return;
-
-            try
-            {
-                var activeFile = dte.ActiveDocument.FullName;
-                ThriftGenerate ser = new ThriftGenerateNet45(activeFile);
-                ser.GenerateSource(true);
+                menuCommand = sender as OleMenuCommand;
+                if (menuCommand != null)
+                {
+                    switch (menuCommand.CommandID.ID)
+                    {
+                        case DynamicMenuCommand.SubCommandId1:
+                            var ser1 = new ThriftGenerateNet45(_dte2.ActiveDocument.FullName);
+                            ser1.GenerateProject();
+                            break;
+                        case DynamicMenuCommand.SubCommandId2:
+                            ThriftGenerate ser2 = new ThriftGenerateNet45(_dte2.ActiveDocument.FullName);
+                            ser2.GenerateSource(true);
+                            break;
+                        case DynamicMenuCommand.SubCommandId3:
+                            ThriftGenerate ser3 = new ThriftGenerateNetCore(_dte2.ActiveDocument.FullName);
+                            ser3.GenerateProject();
+                            break;
+                        case DynamicMenuCommand.SubCommandId4:
+                            ThriftGenerate ser4 = new ThriftGenerateNetCore(_dte2.ActiveDocument.FullName);
+                            ser4.GenerateSource(true);
+                            break;
+                    }
+                }
             }
             catch (Exception ex)
             {
-                string message = ex.Message;
+                string message = $"{menuCommand?.CommandID.ID ?? null}:{ex.Message}";
                 VsShellUtilities.ShowMessageBox(
-                this.package,
-                "Thrift Server Net45",
-                message,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-            }
-
-            
-        }
-
-        private void SubItemCallback3(object sender, EventArgs e)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var dte = GetDTE();
-            if (dte == null)
-                return;
-
-            try
-            {
-                var activeFile = dte.ActiveDocument.FullName;
-                ThriftGenerate ser = new ThriftGenerateNetCore(activeFile);
-                ser.GenerateProject();
-            }
-            catch (Exception ex)
-            {
-                string message = ex.Message;
-                VsShellUtilities.ShowMessageBox(
-                this.package,
-                "Thrift Client dotcore",
-                message,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+                    _package,
+                    message,
+                    "GrpcClient Exception",
+                    OLEMSGICON.OLEMSGICON_INFO,
+                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
             }
         }
-
-        private void SubItemCallback4(object sender, EventArgs e)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var dte = GetDTE();
-            if (dte == null)
-                return;
-
-            try
-            {
-                var activeFile = dte.ActiveDocument.FullName;
-                ThriftGenerate ser = new ThriftGenerateNetCore(activeFile);
-                ser.GenerateSource(true);
-            }
-            catch (Exception ex)
-            {
-                string message = ex.Message;
-                VsShellUtilities.ShowMessageBox(
-                this.package,
-                "Thrift Server dotcore",
-                message,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-            }
-        }
-
-        private void menuItem_BeforeQueryStatus(object sender, EventArgs e)
+        private void OnBeforeQueryStatusDynamicItem(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             OleMenuCommand menuCommand = sender as OleMenuCommand;
             if (menuCommand != null)
             {
-                var dte = GetDTE();
-                if (dte == null)
-                    return;
-
-                string fileName = dte.ActiveDocument.FullName;
-
-                if (fileName != null && fileName.EndsWith(".thrift", StringComparison.OrdinalIgnoreCase))
-                {
+                string fileName = _dte2.ActiveDocument.FullName;
+                if (fileName.EndsWith(".thrift"))
                     menuCommand.Visible = true;
-                }
                 else
-                {
                     menuCommand.Visible = false;
-                }
             }
-        }
-
-        private DTE GetDTE()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            var objDTE = ServiceProvider.GetServiceAsync(typeof(DTE))?.Result;
-            if (objDTE == null)
-                return null;
-            DTE dte = objDTE as DTE;
-            if (dte == null)
-                return null;
-
-            return dte;
         }
     }
 }

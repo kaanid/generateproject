@@ -72,17 +72,30 @@ namespace ThriftService
             }
         }
 
+        private IEnumerable<string> GetMSBUildFiles()
+        {
+            string path1 = "C:\\Program Files\\Microsoft Visual Studio\\";
+            foreach (var s in System.IO.Directory.GetFiles(path1, "MSBuild.exe", SearchOption.AllDirectories))
+                yield return s;
+
+            string path2 = "C:\\Program Files (x86)\\Microsoft Visual Studio\\";
+            foreach (var s in System.IO.Directory.GetFiles(path2, "MSBuild.exe", SearchOption.AllDirectories))
+                yield return s;
+        }
+
         private string GetMSBuildPath()
         {
-            string path2 = "C:\\Program Files (x86)\\Microsoft Visual Studio\\";
-            var files = System.IO.Directory.GetFiles(path2, "MSBuild.exe", SearchOption.AllDirectories);
-            if (files.Length == 0)
+            if (!GetMSBUildFiles().Any())
                 throw new NotSupportedException("MSBuild.exe not found");
 
-            string[] versions = { "2019", "2017" };
-            foreach (var version in versions)
+            string[] versions = { "2022","2019", "2017" };
+            string file1 = string.Empty;
+            foreach (var file in GetMSBUildFiles())
             {
-                foreach (var file in files)
+                if(file1==string.Empty)
+                    file1 = file;
+
+                foreach (var version in versions)
                 {
                     if (file.Contains(version) && file.EndsWith("Bin\\MSBuild.exe"))
                     {
@@ -90,7 +103,7 @@ namespace ThriftService
                     }
                 }
             }
-            return files[0];
+            return file1;
         }
     }
 }
