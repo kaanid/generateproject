@@ -159,7 +159,7 @@ namespace ThriftVSIX
                 VsShellUtilities.ShowMessageBox(
                     _package,
                     message,
-                    "GrpcClient Exception",
+                    "Thriftvsix Exception",
                     OLEMSGICON.OLEMSGICON_INFO,
                     OLEMSGBUTTON.OLEMSGBUTTON_OK,
                     OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
