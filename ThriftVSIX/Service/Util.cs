@@ -133,6 +133,14 @@ namespace ThriftService
             Console.WriteLine(e.Data);
         }
 
+        public static string GetVsixCurrentDirectory()
+        {
+            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            UriBuilder uri = new UriBuilder(codeBase);
+            string path = Uri.UnescapeDataString(uri.Path);
+            return Path.GetDirectoryName(path);
+        }
+
         public static string GetExpansionToolPath()
         {
             var plus = Directory.GetDirectories($"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Microsoft\\VisualStudio\\", "Resources", SearchOption.AllDirectories);
@@ -164,7 +172,7 @@ namespace ThriftService
 
         public static string GetExpansionToolResourcesPath()
         {
-            var toolPath = GetExpansionToolPath();
+            var toolPath = GetVsixCurrentDirectory();
 
             //var resourcesPath = Path.Combine(toolPath, $"{Util.ExtensionToolVersion}\\Resources");
             var resourcesPath = Path.Combine(toolPath, "Resources");
